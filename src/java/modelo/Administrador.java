@@ -3,10 +3,12 @@ package modelo;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Entity
 public class Administrador implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
