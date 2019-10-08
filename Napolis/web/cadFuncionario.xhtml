@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+  <h:head>
+    <meta charset="UTF-8"/>
+    <title>Cadastro de Funcionário</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="../css/normalize.css"/>
+    <link rel="stylesheet" href="../css/cayman.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'/>
+  </h:head>
+  <h:body>
+    <section class="page-header">
+      <h1 class="project-name">Sistema Clínica Veterinária</h1> <br/>
+      <h:link class="btn" outcome="cadMedico" value="Cadastro de Médico"/>
+      <h:link class="btn" outcome="cadProprietario" value="Cadastro de Proprietário"/>    
+      <h:link class="btn" outcome="cadFuncionario" value="Cadastro de Funcionário"/>
+      <h:link class="btn" outcome="cadAnimal" value="Cadastro de Animal"/>
+      <h:link class="btn" outcome="cadAtendimento" value="Atendimentos"/>
+    </section>
+    <section class="main-content">
+      <!-- <p:growl  id="mensagem" showDetail="" autoUpdate=""/> -->
+      <h:form id="frmCad">
+        <h2>Cadastro de Funcionário</h2>
+	<h:panelGrid class="dark-grey" columns="2">
+	    <h:outputLabel value="Nome:" />
+            <h:inputText id="Nome" value="#{FuncionarioControle.funcionario.nome}" />
+            <h:outputLabel for="CPF" value="CPF:" />
+            <h:inputText id="CPF" value="#{FuncionarioControle.funcionario.CPF}" />
+            <h:outputLabel for="Senha" value="Senha:" />
+            <h:inputText id="Senha" value="#{FuncionarioControle.funcionario.senha}" />
+	</h:panelGrid>
+        <p:commandButton class="save-btn" value="Salvar" action="#{FuncionarioControle.incluir()}"
+                             update="frmCad, :frmTable" />  
+        <p:commandButton title="Consulta por nome" action="#{FuncionarioControle.listarPorNomeParcial()}" update=":frmTable" value="Consultar"/>
+        <p:commandButton style="margin-left: 10px" title="Lista todos os funcionários" action="#{FuncionarioControle.listar}" update=":frmTable" value="Listar"/>     
+      </h:form>
+      <h:form id="frmTable">
+	<p:dataTable id="tbFunc" var="func" value="#{FuncionarioControle.lista}"
+            paginator="true" rows="50" emptyMessage="Não há registros na lista"
+            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+            rowsPerPageTemplate="10,15,25,50,100">
+            <f:facet name="header">Lista de Funcionários</f:facet>
+            <p:column headerText="Código" style="width: 10%;" sortBy="#{func.codigo}">
+                <h:outputText value="#{func.codigo}" />
+            </p:column>
+            <p:column headerText="Nome" style="width: 25%;" sortBy="#{func.nome}">	
+                <h:outputText value="#{func.nome}" />
+            </p:column>
+            <p:column headerText="CPF" style="width: 25%;" sortBy="#{func.CPF}">
+                <h:outputText value="#{func.CPF}" />
+            </p:column>
+            <p:column headerText="Senha" style="width: 25%;" sortBy="#{func.senha}">
+                <h:outputText value="#{func.senha}" />
+            </p:column>
+            <p:column headerText="">
+                <p:commandButton value="Editar" action="#{FuncionarioControle.preparaAlterar(func)}" onclick="PF('editarDialog').show()" update=":formAltera"/>
+            </p:column>
+            <p:column headerText="">
+                <p:commandButton value="Excluir" actionListener="#{FuncionarioControle.excluir(func)}" update=":frmTable">
+                <p:confirm header="Excluir funcionário" message="Tem certeza que deseja excluir este funcionário?"/>
+              </p:commandButton>
+            </p:column>
+	</p:dataTable>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+          <p:outputPanel style="width: 100%; text-align:center" layout="block"> 
+            <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />
+            <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" />
+          </p:outputPanel>
+        </p:confirmDialog>
+      </h:form>
+      <p:dialog id="editarDialog" widgetVar="editarDialog" modal="true" header="Alteração de funcionário">   
+            <h:form id="formAltera">  
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Código: "/>
+                    <p:inputText id="codigo" disabled="true" value="#{FuncionarioControle.funcionario.codigo}"/>                       
+                    <h:outputLabel value="Nome: "/>
+                    <p:inputText value="#{FuncionarioControle.aux.nome}" required="true" requiredMessage="Nome obrigatório"/>
+                    <h:outputLabel value="CPF: "/>
+                    <p:inputText maxlength="14" value="#{FuncionarioControle.aux.CPF}"/>
+                    <h:outputLabel value="Senha: "/>
+                    <p:inputText value="#{FuncionarioControle.aux.senha}"/>
+                </h:panelGrid>
+                <p:outputPanel style="width: 100%; text-align:center" > <br/>
+                    <p:commandButton value="Continuar" ajax="false"
+                        action="#{FuncionarioControle.alterar()}" styleClass="ui-state-hover"/> 
+                </p:outputPanel>
+            </h:form>
+      </p:dialog> <br/>
+      <footer class="site-footer">
+          <h:form id="frmSair">
+            <p:commandButton action="#{loginControle.actionLogout()}" value="Sair"/>
+          </h:form>
+          
+            <p:commandButton action="#{loginControle.actionLogout()}" value="Sair"/>
+          </h:form>
+          >
+      </footer>
+    </section>
+  </h:body>
+</html>

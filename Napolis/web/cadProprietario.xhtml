@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+  <h:head>
+    <meta charset="UTF-8"/>
+    <title>Cadastro de Proprietário</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="../css/normalize.css"/>
+    <link rel="stylesheet" href="../css/cayman.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'/>
+  </h:head>
+  <h:body>
+    <section class="page-header">
+      <h1 class="project-name">Sistema Clínica Veterinária</h1> <br/>
+      <h:link class="btn" outcome="cadMedico" value="Cadastro de Médico"/>
+      <h:link class="btn" outcome="cadProprietario" value="Cadastro de Proprietário"/>    
+      <h:link class="btn" outcome="cadFuncionario" value="Cadastro de Funcionário"/>
+      <h:link class="btn" outcome="cadAnimal" value="Cadastro de Animal"/>
+      <h:link class="btn" outcome="cadAtendimento" value="Atendimentos"/>
+    </section>
+    <section class="main-content">
+      <!-- <p:growl  id="mensagem" showDetail="true" autoUpdate="true"/> -->
+      <h:form id="frmCad">
+        <h2>Cadastro de Proprietário</h2>
+        <h:panelGrid class="dark-grey" columns="2">
+          <h:outputText value="Nome:" />
+          <h:inputText id="Nome" maxlength="150" requiredMessage="Nome obrigatório"
+                required="true" value="#{ProprietarioControle.proprietario.nome}" />
+	  <h:outputLabel value="CPF:" />
+          <h:inputText id="CPF" maxlength="14" value="#{ProprietarioControle.proprietario.CPF}"/>
+          <h:outputLabel for="Telefone" value="Telefone:" />
+          <h:inputText id="Telefone" maxlength="20" value="#{ProprietarioControle.proprietario.telefone}" />
+          <h:outputLabel for="Endereco" value="Endereço:" />
+          <h:inputText id="Endereco" maxlength="500" value="#{ProprietarioControle.proprietario.endereco}" />
+        </h:panelGrid>
+        <p:commandButton class="save-btn" value="Salvar" action="#{ProprietarioControle.incluir()}"
+                             update="frmCad, :frmTable" />  
+        <p:commandButton title="Consulta por nome" action="#{ProprietarioControle.listarPorNomeParcial()}" update=":frmTable" value="Consultar"/>
+        <p:commandButton style="margin-left: 10px" title="Lista todos os proprietários" action="#{ProprietarioControle.listar}" update=":frmTable" value="Listar"/>     
+      </h:form>
+      <h:form id="frmTable">
+	<p:dataTable id="tbProp" var="prop" value="#{ProprietarioControle.lista}"
+            paginator="true" rows="50" emptyMessage="Não há registros na lista"
+            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+            rowsPerPageTemplate="10,15,25,50,100">
+            <f:facet name="header">Lista de Proprietários</f:facet>
+            <p:column headerText="Código" style="width: 10%;"
+                      sortBy="#{prop.codigo}">
+                <h:outputText value="#{prop.codigo}" />
+            </p:column>
+            <p:column headerText="Nome" style="width: 25%;" sortBy="#{prop.nome}">	
+                <h:outputText value="#{prop.nome}" />
+            </p:column>
+            <p:column headerText="CPF" style="width: 25%;" sortBy="#{prop.CPF}">
+                <h:outputText value="#{prop.CPF}" />
+            </p:column>
+            <p:column headerText="Telefone" style="width: 25%;" sortBy="#{prop.telefone}">
+                <h:outputText value="#{prop.telefone}" />
+            </p:column>
+            <p:column headerText="Endereço" style="width: 25%;" sortBy="#{prop.endereco}">
+                <h:outputText value="#{prop.endereco}" />
+            </p:column>
+            <p:column headerText="">
+                <p:commandButton value="Editar" action="#{ProprietarioControle.preparaAlterar(prop)}" onclick="PF('editarDialog').show()" update=":formAltera"/>
+            </p:column>
+            <p:column headerText="">
+              <p:commandButton value="Excluir" actionListener="#{ProprietarioControle.excluir(prop)}" update=":frmTable">
+                <p:confirm header="Excluir proprietário" message="Tem certeza que deseja excluir este proprietário?"/>
+              </p:commandButton>
+            </p:column>
+	</p:dataTable>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+          <p:outputPanel style="width: 100%; text-align:center" layout="block"> 
+            <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />
+            <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" />
+          </p:outputPanel>
+        </p:confirmDialog>
+      </h:form>
+      <p:dialog id="editarDialog" widgetVar="editarDialog" modal="true" header="Alteração de proprietário">   
+            <h:form id="formAltera">  
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Código: "/>
+                    <p:inputText id="codigo" disabled="true" value="#{ProprietarioControle.proprietario.codigo}"/>                       
+                    <h:outputLabel value="Nome: "/>
+                    <p:inputText value="#{ProprietarioControle.aux.nome}" required="true" requiredMessage="Nome obrigatório"/>
+                    <h:outputLabel value="CPF: "/>
+                    <p:inputText maxlength="14" value="#{ProprietarioControle.aux.CPF}"/>
+                    <h:outputLabel value="Telefone: "/>
+                    <p:inputText maxlength="20" value="#{ProprietarioControle.aux.telefone}"/>
+                    <h:outputLabel value="Endereço: "/>
+                    <p:inputText maxlength="500" value="#{ProprietarioControle.aux.endereco}"/>
+                </h:panelGrid>
+                <p:outputPanel style="width: 100%; text-align:center" > <br/>
+                    <p:commandButton value="Continuar" ajax="false"
+                        action="#{ProprietarioControle.alterar()}" styleClass="ui-state-hover"/> 
+                </p:outputPanel>
+            </h:form>
+        </p:dialog> <br/>
+      <footer class="site-footer">
+        <h:form id="frmSair">
+          <p:commandButton action="#{loginControle.actionLogout()}" value="Sair"/>
+        </h:form>
+      </footer>
+    </section>
+  </h:body>
+</html>
